@@ -12,7 +12,7 @@ export function withSSRAuth<P>(fn: GetServerSideProps<P>): GetServerSideProps {
   ): Promise<GetServerSidePropsResult<P>> => {
     const cookies = parseCookies(ctx);
     const token = cookies['forecast.token'];
-    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ta errado ainda');
+
     if (!token) {
       return {
         redirect: {
