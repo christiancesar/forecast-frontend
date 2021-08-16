@@ -4,12 +4,13 @@ import {
   Icon,
   Image,
   Link as ChakraLink,
+  ScaleFade,
   Stack,
   useToast,
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Link from 'next/link';
-import { ChangeEvent, useCallback } from 'react';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { FaChevronLeft } from 'react-icons/fa';
@@ -44,7 +45,10 @@ const signInFormSchema = yup.object().shape({
 });
 
 export default function Home() {
+  const [scaleFade, setScaleFade] = useState(true);
   const [loading, setLoading] = useState(false);
+  const { push } = useRouter();
+
   const { register, handleSubmit, formState } = useForm({
     resolver: yupResolver(signInFormSchema),
   });
@@ -52,6 +56,12 @@ export default function Home() {
   const { errors } = formState;
 
   const toast = useToast();
+
+  async function handleClickRegister() {
+    setScaleFade(false);
+    await new Promise(resolve => setTimeout(resolve, 300));
+    push('/');
+  }
 
   const handleSignIn: SubmitHandler<SignInFormData> = async values => {
     try {
@@ -75,98 +85,108 @@ export default function Home() {
 
   return (
     <>
-      <Flex as="header" padding="5" marginBottom="8">
-        <Link href="/" passHref>
-          <ChakraLink _hover={{ color: '#44EE88' }}>
-            <Icon as={FaChevronLeft} />
-          </ChakraLink>
-        </Link>
-        <Image
-          src="/logotipo.svg"
-          w="150px"
-          alt="Forecast logo"
-          margin="0 auto"
-        />
-      </Flex>
-      <Flex
-        as="form"
-        w="100vw"
-        h="80vh"
-        margin="auto"
-        maxW="500px"
-        flexDir="column"
-        justifyContent="center"
-        padding="6"
-        onSubmit={handleSubmit(handleSignIn)}
+      <ScaleFade
+        transition={{ enter: { duration: 0.2, delay: 0.5 } }}
+        in={scaleFade}
+        unmountOnExit
       >
-        <Stack spacing="4">
-          <Stack direction="row">
+        <Flex as="header" padding="5" marginBottom="8">
+          {/* <Link href="/" passHref> */}
+          <Button
+            bg="transparent"
+            _hover={{ color: '#44EE88' }}
+            onClick={handleClickRegister}
+          >
+            <Icon as={FaChevronLeft} />
+          </Button>
+          {/* </Link> */}
+          <Image
+            src="/logotipo.svg"
+            w="150px"
+            alt="Forecast logo"
+            margin="0 auto"
+          />
+        </Flex>
+        <Flex
+          as="form"
+          w="100vw"
+          h="80vh"
+          margin="auto"
+          maxW="500px"
+          flexDir="column"
+          justifyContent="center"
+          padding="6"
+          onSubmit={handleSubmit(handleSignIn)}
+        >
+          <Stack spacing="4">
+            <Stack direction="row">
+              <Input
+                label="Nome"
+                size="lg"
+                name="firstName"
+                type="firstName"
+                placeholder="John"
+                error={errors.firstName}
+                {...register('firstName')}
+              />
+              <Input
+                label="Sobrenome"
+                size="lg"
+                name="lastName"
+                type="lastName"
+                placeholder="Doe"
+                error={errors.lastName}
+                {...register('lastName')}
+              />
+            </Stack>
             <Input
-              label="Nome"
+              label="Celular"
               size="lg"
-              name="firstName"
-              type="firstName"
-              placeholder="John"
-              error={errors.firstName}
-              {...register('firstName')}
+              name="phone"
+              placeholder="66 9 XXXX XXXX"
+              type="tel"
+              error={errors.phone}
+              {...register('phone')}
             />
             <Input
-              label="Sobrenome"
+              label="Email"
               size="lg"
-              name="lastName"
-              type="lastName"
-              placeholder="Doe"
-              error={errors.lastName}
-              {...register('lastName')}
+              name="email"
+              type="email"
+              placeholder="exemplo@gmail.com"
+              error={errors.email}
+              {...register('email')}
+            />
+            <Input
+              label="Senha"
+              size="lg"
+              name="password"
+              type="password"
+              placeholder="Mínimo de 8 caracteres"
+              error={errors.password}
+              {...register('password')}
+            />
+            <Input
+              label="Confirmar senha"
+              size="lg"
+              name="confirmation_password"
+              type="password"
+              error={errors.confirmation_password}
+              {...register('confirmation_password')}
             />
           </Stack>
-          <Input
-            label="Celular"
+          <Button
+            type="submit"
+            mt="6"
+            bg="#282A36"
             size="lg"
-            name="phone"
-            placeholder="66 9 XXXX XXXX"
-            type="tel"
-            error={errors.phone}
-            {...register('phone')}
-          />
-          <Input
-            label="Email"
-            size="lg"
-            name="email"
-            type="email"
-            placeholder="exemplo@gmail.com"
-            error={errors.email}
-            {...register('email')}
-          />
-          <Input
-            label="Senha"
-            size="lg"
-            name="password"
-            type="password"
-            placeholder="Mínimo de 8 caracteres"
-            error={errors.password}
-            {...register('password')}
-          />
-          <Input
-            label="Confirmar senha"
-            size="lg"
-            name="confirmation_password"
-            type="password"
-            error={errors.confirmation_password}
-            {...register('confirmation_password')}
-          />
-        </Stack>
-        <Button
-          type="submit"
-          mt="6"
-          bg="#282A36"
-          size="lg"
-          isLoading={loading}
-          _hover={{ backgroundColor: '#44EE88', color: '#282A36' }}
-        >
-          Registrar
-        </Button>
-      </Flex>
+            isLoading={loading}
+            _hover={{ backgroundColor: '#44EE88', color: '#282A36' }}
+          >
+            Registrar
+          </Button>
+        </Flex>
+      </ScaleFade>
     </>
   );
 }

@@ -1,20 +1,20 @@
 import {
   Button,
-  Divider,
+  ScaleFade,
   Flex,
   Icon,
   Image,
   Link as ChakraLink,
   Stack,
-  Text,
   useToast,
+  useDisclosure,
+  Collapse,
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { signin, useSession } from 'next-auth/client';
 import Link from 'next/link';
-import { useContext, useState } from 'react';
+import { useRouter } from 'next/router';
+import { useContext, useState, useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { FaGoogle } from 'react-icons/fa';
 import { FiLogOut } from 'react-icons/fi';
 import * as yup from 'yup';
 import { Input } from '../components/Form/Input';
@@ -34,6 +34,8 @@ const signInFormSchema = yup.object().shape({
 export default function Home() {
   const { signIn } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
+  const [colapse, setColapse] = useState(false);
+  const { push } = useRouter();
   const toast = useToast();
 
   const { register, handleSubmit, formState } = useForm({
@@ -41,6 +43,16 @@ export default function Home() {
   });
 
   const { errors } = formState;
+
+  useEffect(() => {
+    new Promise(resolve => setTimeout(() => setColapse(true), 2000));
+  }, []);
+
+  async function handleClickRegister() {
+    setColapse(false);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    push('/signup');
+  }
 
   const handleSignIn: SubmitHandler<SignInFormData> = async values => {
     try {
@@ -53,23 +65,24 @@ export default function Home() {
   };
 
   return (
-    <Flex
-      w="100%"
-      h="100vh"
-      alignItems="center"
-      justifyContent="center"
-      flexDir="column"
-    >
-      <Stack spacing="8">
-        <Image
-          src="/logo.svg"
-          w="180px"
-          alt="Forecast logo"
-          alignSelf="center"
-          marginBottom="5"
-        />
+    <ScaleFade transition={{ enter: { duration: 0.2, delay: 0.5 } }} in={true}>
+      <Flex
+        w="100%"
+        h="100vh"
+        alignItems="center"
+        justifyContent="center"
+        flexDir="column"
+      >
+        <Stack spacing="8">
+          <Image
+            src="/logo.svg"
+            w="180px"
+            alt="Forecast logo"
+            alignSelf="center"
+            marginBottom="5"
+          />
 
-        {/* <Button
+          {/* <Button
             leftIcon={<FaGoogle />}
             type="submit"
             mt="6"
@@ -88,53 +101,60 @@ export default function Home() {
             </Text>
             <Divider color="gray.300" />
           </Flex> */}
-
-        <Flex
-          as="form"
-          width="100%"
-          margin="auto"
-          flexDir="column"
-          padding="6"
-          onSubmit={handleSubmit(handleSignIn)}
-        >
-          <Stack spacing="5">
-            <Input
-              label="Email"
-              size="lg"
-              name="email"
-              type="email"
-              error={errors.email}
-              {...register('email', {})}
-            />
-            <Input
-              label="Senha"
-              size="lg"
-              name="password"
-              type="password"
-              error={errors.password}
-              {...register('password')}
-            />
-          </Stack>
-          <Button
-            type="submit"
-            mt="6"
-            bg="#282A36"
-            size="lg"
-            isLoading={loading}
-            _hover={{ backgroundColor: '#44EE88', color: '#282A36' }}
-          >
-            Login
-          </Button>
-        </Flex>
-
-        <Link href="/signup" passHref>
-          <ChakraLink _hover={{ color: '#44EE88' }} alignSelf="center">
-            <Icon as={FiLogOut} marginRight="2" />
-            Registrar-se
-          </ChakraLink>
-        </Link>
-      </Stack>
-    </Flex>
+          <Collapse in={colapse} unmountOnExit>
+            <Flex
+              as="form"
+              width="100%"
+              margin="auto"
+              flexDir="column"
+              padding="6"
+              onSubmit={handleSubmit(handleSignIn)}
+            >
+              <Stack spacing="5">
+                <Input
+                  label="Email"
+                  size="lg"
+                  name="email"
+                  type="email"
+                  error={errors.email}
+                  {...register('email', {})}
+                />
+                <Input
+                  label="Senha"
+                  size="lg"
+                  name="password"
+                  type="password"
+                  error={errors.password}
+                  {...register('password')}
+                />
+              </Stack>
+              <Button
+                type="submit"
+                mt="6"
+                bg="#282A36"
+                size="lg"
+                isLoading={loading}
+                _hover={{ backgroundColor: '#44EE88', color: '#282A36' }}
+              >
+                Login
+              </Button>
+              {/* <Link href="/signup" passHref> */}
+              <Button
+                bg="transparent"
+                _hover={{ color: '#44EE88' }}
+                alignSelf="center"
+                marginTop="6"
+                onClick={handleClickRegister}
+              >
+                <Icon as={FiLogOut} marginRight="2" />
+                Registrar-se
+              </Button>
+              {/* </Link> */}
+            </Flex>
+          </Collapse>
+        </Stack>
+      </Flex>
+    </ScaleFade>
   );
 }
 
