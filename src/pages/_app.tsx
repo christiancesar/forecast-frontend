@@ -7,13 +7,13 @@ import { theme } from '../styles/theme';
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
-      <NextAuthProvider session={pageProps.session}>
-        <ChakraProvider resetCSS theme={theme}>
-          <AuthProvider>
-            <Component {...pageProps} />
-          </AuthProvider>
-        </ChakraProvider>
-      </NextAuthProvider>
+      {/* <NextAuthProvider session={pageProps.session}> */}
+      <ChakraProvider resetCSS theme={theme}>
+        <AuthProvider>
+          <Component {...pageProps} />
+        </AuthProvider>
+      </ChakraProvider>
+      {/* </NextAuthProvider> */}
     </>
   );
 }

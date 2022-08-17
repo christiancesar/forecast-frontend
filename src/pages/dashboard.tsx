@@ -8,8 +8,8 @@ export default function Dashboard() {
   return <h1>Dashboard: {user?.email}</h1>;
 }
 
-export const getServerSideProps = withSSRAuth(async ctx => {
-  return {
-    props: {},
-  };
-});
+// export const getServerSideProps = withSSRAuth(async ctx => {
+//   return {
+//     props: {},
+//   };
+// });

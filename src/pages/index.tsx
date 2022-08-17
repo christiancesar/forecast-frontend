@@ -9,12 +9,16 @@ import {
   useToast,
   useDisclosure,
   Collapse,
+  Divider,
+  Text,
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { signin } from 'next-auth/client';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useContext, useState, useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { FaGoogle } from 'react-icons/fa';
 import { FiLogOut } from 'react-icons/fi';
 import * as yup from 'yup';
 import { Input } from '../components/Form/Input';
@@ -36,7 +40,6 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [colapse, setColapse] = useState(false);
   const { push } = useRouter();
-  const toast = useToast();
 
   const { register, handleSubmit, formState } = useForm({
     resolver: yupResolver(signInFormSchema),
@@ -57,6 +60,7 @@ export default function Home() {
   const handleSignIn: SubmitHandler<SignInFormData> = async values => {
     try {
       setLoading(true);
+      push('/dashboard');
       await signIn(values);
       setLoading(false);
     } catch (error) {
@@ -82,25 +86,6 @@ export default function Home() {
             marginBottom="5"
           />
 
-          {/* <Button
-            leftIcon={<FaGoogle />}
-            type="submit"
-            mt="6"
-            colorScheme="red"
-            size="lg"
-            fontWeight="400"
-            onClick={() => signin('google')}
-          >
-            Entre com o Google
-          </Button>
-
-          <Flex align="center">
-            <Divider color="gray.300" />
-            <Text marginLeft="2" marginRight="2" color="gray.300">
-              Ou
-            </Text>
-            <Divider color="gray.300" />
-          </Flex> */}
           <Collapse in={colapse} unmountOnExit>
             <Flex
               as="form"
@@ -110,6 +95,25 @@ export default function Home() {
               padding="6"
               onSubmit={handleSubmit(handleSignIn)}
             >
+              <Button
+                leftIcon={<FaGoogle />}
+                type="submit"
+                mt="6"
+                colorScheme="red"
+                size="lg"
+                fontWeight="400"
+                onClick={() => signin('google')}
+              >
+                Entre com o Google
+              </Button>
+
+              <Flex align="center">
+                <Divider color="gray.300" />
+                <Text marginLeft="2" marginRight="2" color="gray.300">
+                  Ou
+                </Text>
+                <Divider color="gray.300" />
+              </Flex>
               <Stack spacing="5">
                 <Input
                   label="Email"
@@ -134,6 +138,7 @@ export default function Home() {
                 bg="#282A36"
                 size="lg"
                 isLoading={loading}
+                _loading={{ color: '#44EE88' }}
                 _hover={{ backgroundColor: '#44EE88', color: '#282A36' }}
               >
                 Login

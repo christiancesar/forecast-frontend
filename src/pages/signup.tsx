@@ -65,14 +65,17 @@ export default function Home() {
 
   const handleSignIn: SubmitHandler<SignInFormData> = async values => {
     try {
-      const reponse = await api.post('/users', values);
+      setLoading(!loading);
+      await api.post('/users', values);
       toast({
         description: 'Sua conta foi criada, aproveite 😁',
         status: 'success',
         position: 'top-right',
         isClosable: false,
       });
+      setLoading(!loading);
     } catch (error) {
+      setLoading(!loading);
       toast({
         title: 'Erro',
         description: 'Email já cadastrado em nossa base de dados 🙁',
@@ -191,8 +194,8 @@ export default function Home() {
   );
 }
 
-export const getServerSideProps = withSSRGuest(async ctx => {
-  return {
-    props: {},
-  };
-});
+// export const getServerSideProps = withSSRGuest(async ctx => {
+//   return {
+//     props: {},
+//   };
+// });

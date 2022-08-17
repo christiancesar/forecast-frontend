@@ -9,7 +9,7 @@ export const theme = extendTheme({
     global: {
       body: {
         bg: '#181A22',
-        color: 'gray.50',
+        color: 'white',
       },
     },
   },
